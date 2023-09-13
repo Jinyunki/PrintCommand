@@ -161,7 +161,7 @@ namespace PrintCommand
         /// <param name="ribbonVolt"></param>
         /// <param name="ribbonBackVolt"></param>
         /// <returns></returns>
-        public string _SetMotorVoltCommand(double ribbonVolt,double ribbonBackVolt)
+        public string _SetMotorVoltCommand(double ribbonVolt, double ribbonBackVolt)
         {
             if (ribbonVolt > 15)
             {
@@ -257,12 +257,12 @@ namespace PrintCommand
         /// <summary>
         /// 비트맵 글꼴 형식을 지정합니다
         /// </summary>
-        /// <param name="textInputNum">textGroup을 지정 합니다 (0~199)</param>
+        /// <param name="textNumber">textGroup을 지정 합니다 (0~199)</param>
         /// <param name="positionX">X좌표를 지정 합니다(0~9999) 1=0.1mm</param>
         /// <param name="positionY">Y좌표를 지정 합니다(0~9999) 1=0.1mm</param>
         /// <param name="textHorizontalMargin">가로 간격을 지정 합니다(1~9 or 05~95 = 0.5~9.5)</param>
         /// <param name="textVerticalMargin">새로 간격을 지정 합니다(1~9 or 05~95 = 0.5~9.5)</param>
-        /// <param name="TypeFont"> FontStyle을 지정합니다
+        /// <param name="selectedFont"> FontStyle을 지정합니다
         /// [  "A" = Times Roman (Medium) 8 point  ]
         /// [  "B" = Times Roman (Medium) 10 point  ]
         /// [  "C" = Times Roman (Bold) 10 point  ]
@@ -277,9 +277,9 @@ namespace PrintCommand
         /// [  "L" = Helvetica (Italic) 12 point  ]
         /// [  "q" = Gothic725 Black</param>  ]
         /// <param name="rotate">문자열의 각도를 지정합니다 0,90,180,270도</param>
-        /// <param name="textOption">잉크농도를 지정합니다 B = 기본 Black character</param>
+        /// <param name="textOption">문자 특성 "B" = 기본 Black Font</param>
         /// <returns></returns>
-        public string _SetBitmapText(double textInputNum, double positionX, double positionY, double textHorizontalMargin, double textVerticalMargin, string TypeFont, int rotate, string textOption = "B")
+        public string _SetBitmapFont(double textNumber, double positionX, double positionY, double textHorizontalMargin, double textVerticalMargin, string selectedFont, int rotate, string textOption = "B")
         {
             string rotateValue = string.Empty;
             switch (rotate)
@@ -297,12 +297,12 @@ namespace PrintCommand
                     rotateValue = "33";
                     break;
             }
-            
+
 
             StringBuilder builder = new StringBuilder();
             builder.Append(_StartCommand)
                    .Append("PC")
-                   .Append(textInputNum.ToString("000"))
+                   .Append(textNumber.ToString("000"))
                    .Append(";")
                    .Append(positionX.ToString("0000"))
                    .Append(",")
@@ -312,7 +312,7 @@ namespace PrintCommand
                    .Append(",")
                    .Append(textVerticalMargin.ToString())
                    .Append(",")
-                   .Append(TypeFont)
+                   .Append(selectedFont)
                    .Append(",")
                    .Append(rotateValue)
                    .Append(",")
@@ -322,7 +322,116 @@ namespace PrintCommand
             return builder.ToString();
         }
 
-        
+        /// <summary>
+        /// font형식을 지정합니다
+        /// </summary>
+        /// <param name="textNumber">textGroupNumber (00~99) </param>
+        /// <param name="positionX">StartPoint X Value</param>
+        /// <param name="positionY">StartPoint Y Value</param>
+        /// <param name="fontWidth">폰트 넓이</param>
+        /// <param name="fontHeight">폰트 높이</param>
+        /// <param name="selectedFont">폰트 Style Selected
+        /// [   A: TEC FONT1 (Helvetica [bold])   ]
+        /// [   B: TEC FONT1 (Helvetica [bold] proportional)   ]
+        /// [   E: Price Font 1   ]
+        /// [   F: Price Font 2   ]
+        /// [   G: Price Font 3   ]
+        /// [   H: DUTCH801 Bold (Times Roman Proportional)   ]
+        /// [   I: BRUSH738 Regular (Pop Proportional)   ]
+        /// [   J: GOTHIC725 Black (Proportional)   ]</param>
+        /// <param name="rotate">font 회전 각도(0,90,180,270)</param>
+        /// <param name="textOption">문자 특성 "B" = 기본 Black Font</param>
+        /// <returns></returns>
+        public string _SetTrueFont(double textNumber, double positionX, double positionY, double fontWidth, double fontHeight, string selectedFont, int rotate, string textOption = "B")
+        {
+            string rotateValue = string.Empty;
+            switch (rotate)
+            {
+                case 0:
+                    rotateValue = "00";
+                    break;
+                case 90:
+                    rotateValue = "11";
+                    break;
+                case 180:
+                    rotateValue = "22";
+                    break;
+                case 270:
+                    rotateValue = "33";
+                    break;
+            }
 
+
+            StringBuilder builder = new StringBuilder();
+            builder.Append(_StartCommand)
+                   .Append("PV")
+                   .Append(textNumber.ToString("00"))
+                   .Append(";")
+                   .Append(positionX.ToString("0000"))
+                   .Append(",")
+                   .Append(positionY.ToString("0000"))
+                   .Append(",")
+                   .Append(fontWidth.ToString())
+                   .Append(",")
+                   .Append(fontHeight.ToString())
+                   .Append(",")
+                   .Append(selectedFont)
+                   .Append(",")
+                   .Append(rotateValue)
+                   .Append(",")
+                   .Append(textOption)
+                   .Append(_EndCommand);
+
+            return builder.ToString();
+
+
+        }
+
+
+        public string _SetBarcode(double barcodeNumber, double positionX, double positionY, string barcodeType, double fontHeight, string selectedFont, int rotate, string textOption = "B")
+        {
+            string rotateValue = string.Empty;
+            switch (rotate)
+            {
+                case 0:
+                    rotateValue = "00";
+                    break;
+                case 90:
+                    rotateValue = "11";
+                    break;
+                case 180:
+                    rotateValue = "22";
+                    break;
+                case 270:
+                    rotateValue = "33";
+                    break;
+            }
+
+
+            StringBuilder builder = new StringBuilder();
+            builder.Append(_StartCommand)
+                   .Append("XB")
+                   .Append(barcodeNumber.ToString("00"))
+                   .Append(";")
+                   .Append(positionX.ToString("0000"))
+                   .Append(",")
+                   .Append(positionY.ToString("0000"))
+                   .Append(",")
+                   .Append(barcodeType)
+                   .Append(",")
+
+                   .Append(fontHeight.ToString())
+                   .Append(",")
+                   .Append(selectedFont)
+                   .Append(",")
+                   .Append(rotateValue)
+                   .Append(",")
+                   .Append(textOption)
+                   .Append(_EndCommand);
+
+            return builder.ToString();
+
+
+        }
     }
 }
