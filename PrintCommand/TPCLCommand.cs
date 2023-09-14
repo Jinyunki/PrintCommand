@@ -48,16 +48,20 @@ namespace PrintCommand
         const char SPACE = (char)32;
         #endregion
 
-
-
         /// <summary>
         /// [ESC] 를 뜻하며 구문의 시작 = "{"
         /// </summary>
-        public string _StartCommand = "{";
+        public string _StartCommand { get; private set; } = "{";
         /// <summary>
-        /// [LF][NUL] = "|}"
+        /// [LF][NUL] 구문의 끝 = "|}"
         /// </summary>
-        public string _EndCommand = "|}";
+        public string _EndCommand { get; private set; } = "|}";
+        /// <summary>
+        /// [LF] 구문 And = "|"
+        /// </summary>
+        public string _AndCommand { get; private set; } = "|";
+
+
         /// <summary>
         /// 초기 이미지버퍼 클리어 메서드
         /// </summary>
@@ -388,7 +392,41 @@ namespace PrintCommand
         }
 
 
-        public string _SetBarcode(double barcodeNumber, double positionX, double positionY, string barcodeType, double fontHeight, string selectedFont, int rotate, string textOption = "B")
+        /// <summary>
+        /// 바코드 형식을 지정합니다
+        /// </summary>
+        /// <param name="barcodeNumber">지정 Barcode Number [ 0 ~ 31 ]</param>
+        /// <param name="positionX"> X축 [ 0000 - 9999 ]</param>
+        /// <param name="positionY"> Y축 [ 0000 - 9999 ]</param>
+        /// <param name="barcodeType">BarcodeType
+        ///     [  0: JAN8, EAN8  ]
+        ///     [  5: JAN13, EAN13  ]
+        ///     [  6: UPC-E  ]
+        ///     [  7: EAN13 + 2 digits  ]
+        ///     [  8: EAN13 + 5 digits  ]
+        ///     [  9: CODE128 (with auto code selection)   ]
+        ///     [  A: CODE128 (without auto code selection)  ]
+        ///     [  C: CODE93  ]
+        ///     [  G: UPC-E + 2 digits  ]
+        ///     [  H: UPC-E + 5 digits  ]
+        ///     [  I: EAN8 + 2 digits  ]
+        ///     [  J: EAN8 + 5 digits  ]
+        ///     [  K: UPC-A  ]
+        ///     [  L: UPC-A + 2 digits  ]
+        ///     [  M: UPC-A + 5 digits  ]
+        ///     [  N: UCC/EAN128  ]
+        ///     [  R: Customer bar code (Postal code for Japan)  ]
+        ///     [  S: Highest priority customer bar code (Postal code for Japan)  ]
+        ///     [  U: POSTNET (Postal code for U.S)  ]
+        ///     [  V: RM4SCC (ROYAL MAIL 4 STATE CUSTOMER CODE) / (Postal code for U.K)  ]
+        ///     [  W: KIX CODE (Postal code for Belgium)  ]
+        /// </param>
+        /// <param name="checkDigit">판독 오류 체크 default : 1</param>
+        /// <param name="moduleWidth">01~15(in dots)</param>
+        /// <param name="rotate">회전 각도 ( 0,90,180,270 )</param>
+        /// <param name="barcodeHeigh">Barcode 높이( 0000 ~ 1000 -> {0.1mm units} )</param>
+        /// <returns></returns>
+        public string _SetBarcode(double barcodeNumber, double positionX, double positionY, string barcodeType, int checkDigit, double moduleWidth, int rotate, double barcodeHeigh)
         {
             string rotateValue = string.Empty;
             switch (rotate)
@@ -411,26 +449,49 @@ namespace PrintCommand
             StringBuilder builder = new StringBuilder();
             builder.Append(_StartCommand)
                    .Append("XB")
-                   .Append(barcodeNumber.ToString("00"))
+                   .Append(barcodeNumber.ToString("00")) // aa
                    .Append(";")
-                   .Append(positionX.ToString("0000"))
+                   .Append(positionX.ToString("0000")) // bbbb
                    .Append(",")
-                   .Append(positionY.ToString("0000"))
+                   .Append(positionY.ToString("0000")) // cccc
                    .Append(",")
-                   .Append(barcodeType)
+                   .Append(barcodeType) // d
                    .Append(",")
-
-                   .Append(fontHeight.ToString())
+                   .Append(checkDigit.ToString()) // e
                    .Append(",")
-                   .Append(selectedFont)
+                   .Append(moduleWidth.ToString("00")) // ff
                    .Append(",")
-                   .Append(rotateValue)
+                   .Append(rotateValue) // k
                    .Append(",")
-                   .Append(textOption)
+                   .Append(barcodeHeigh.ToString("0000")) // llll
                    .Append(_EndCommand);
 
             return builder.ToString();
 
+
+        }
+
+        //RC
+        public string _SetBitmapValueInput(double textNumber, string inputText)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(_StartCommand)
+                   .Append("RC")
+                   .Append(textNumber.ToString("000"))
+                   .Append(";")
+                   .Append(inputText)
+                   .Append(_EndCommand);
+
+            return builder.ToString();
+        }
+        //RV
+        public string _SetTrueValueInput()
+        {
+
+        }
+        //RB
+        public string _SetBarcodeValueInput()
+        {
 
         }
     }
