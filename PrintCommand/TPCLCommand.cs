@@ -257,7 +257,7 @@ namespace PrintCommand
             return builder.ToString();
         }
 
-
+        //PC
         /// <summary>
         /// 비트맵 글꼴 형식을 지정합니다
         /// </summary>
@@ -326,6 +326,7 @@ namespace PrintCommand
             return builder.ToString();
         }
 
+        //PV
         /// <summary>
         /// font형식을 지정합니다
         /// </summary>
@@ -391,7 +392,7 @@ namespace PrintCommand
 
         }
 
-
+        //XB
         /// <summary>
         /// 바코드 형식을 지정합니다
         /// </summary>
@@ -472,6 +473,12 @@ namespace PrintCommand
         }
 
         //RC
+        /// <summary>
+        /// _SetSelectedLine 의 데이터 주입
+        /// </summary>
+        /// <param name="textNumber">_SetSelectedLine와 동일한 textNumber</param>
+        /// <param name="inputText">_SetSelectedLine에 들어갈 bitmapFont inputValue</param>
+        /// <returns></returns>
         public string _SetBitmapValueInput(double textNumber, string inputText)
         {
             StringBuilder builder = new StringBuilder();
@@ -485,14 +492,43 @@ namespace PrintCommand
             return builder.ToString();
         }
         //RV
-        public string _SetTrueValueInput()
+        /// <summary>
+        /// _SetTrueFont 의 데이터 주입
+        /// </summary>
+        /// <param name="textNumber">_SetTrueFont와 동일한 textNumber</param>
+        /// <param name="inputText">해당 textNumber의 위치에 들어갈 text DataValue</param>
+        /// <returns></returns>
+        public string _SetTrueValueInput(double textNumber, string inputText)
         {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(_StartCommand)
+                   .Append("RV")
+                   .Append(textNumber.ToString("00"))
+                   .Append(";")
+                   .Append(inputText)
+                   .Append(_EndCommand);
 
+            return builder.ToString();
         }
-        //RB
-        public string _SetBarcodeValueInput()
-        {
 
+        //RB
+        /// <summary>
+        /// _SetBarcode 의 데이터 주입
+        /// </summary>
+        /// <param name="barcodeNumber">_SetBarcode 동일한 textNumber</param>
+        /// <param name="inputText">해당 textNumber의 위치에 들어갈 barcode DataValue</param>
+        /// <returns></returns>
+        public string _SetBarcodeValueInput(double barcodeNumber, string inputText)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(_StartCommand)
+                   .Append("RB")
+                   .Append(barcodeNumber.ToString("00"))
+                   .Append(";")
+                   .Append(inputText)
+                   .Append(_EndCommand);
+
+            return builder.ToString();
         }
     }
 }
