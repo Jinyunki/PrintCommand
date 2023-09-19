@@ -61,7 +61,7 @@ namespace PrintCommand
         /// </summary>
         public string _AndCommand { get; private set; } = "|";
 
-
+        //C
         /// <summary>
         /// 초기 이미지버퍼 클리어 메서드
         /// </summary>
@@ -75,6 +75,7 @@ namespace PrintCommand
             return builder.ToString();
         }
 
+        //D
         /// <summary>
         /// 라벨 사이즈 지정 메서드 각 라벨의 높이,넓이,인쇄구간의 높이,넓이 를뜻함
         /// </summary>
@@ -95,6 +96,7 @@ namespace PrintCommand
             return builder.ToString();
         }
 
+        //AX
         /// <summary>
         /// 라벨의 상세 조정 메서드, true = "+"(plus), false = "-"(minus)
         ///  0~500, 0~500,0~99 단위 : 1=0.1mm
@@ -127,7 +129,8 @@ namespace PrintCommand
 
             return builder.ToString();
         }
-
+        
+        //AY
         /// <summary>
         /// 열전도 방법과, 인쇄 밀도를 지정합니다.
         /// density가 true면, Darker, false면 Light
@@ -158,6 +161,7 @@ namespace PrintCommand
             return builder.ToString();
         }
 
+        //RM
         /// <summary>
         /// 리본 모터 Volt출력값을 조정합니다
         /// input = 1 당 5% 감소 최대 15 (45%)
@@ -187,7 +191,8 @@ namespace PrintCommand
 
             return builder.ToString();
         }
-
+        
+        //XR
         /// <summary>
         /// 특정위치의 영역대를 지정합니다.
         /// startX,Y의 좌표로부터 endX,Y의 좌표까지 사각형으로 지정
@@ -219,7 +224,8 @@ namespace PrintCommand
 
             return builder.ToString();
         }
-
+        
+        //LC
         /// <summary>
         /// 포지션을 지정하여 선을 그립니다.
         /// TypeLine = true면 Line false면 Rectangle
@@ -474,7 +480,7 @@ namespace PrintCommand
 
         //RC
         /// <summary>
-        /// _SetSelectedLine 의 데이터 주입
+        /// _SetBitmapFont 의 데이터 주입
         /// </summary>
         /// <param name="textNumber">_SetSelectedLine와 동일한 textNumber</param>
         /// <param name="inputText">_SetSelectedLine에 들어갈 bitmapFont inputValue</param>
@@ -527,6 +533,74 @@ namespace PrintCommand
                    .Append(";")
                    .Append(inputText)
                    .Append(_EndCommand);
+
+            return builder.ToString();
+        }
+
+        //XS
+        /// <summary>
+        /// 출력 시작 이벤트 메서드
+        /// </summary>
+        /// <param name="printCount">출력 할 개수를 입력합니다[0001~9999]</param>
+        /// <param name="cutInterval">몇장 단위로 커팅 할 것인가 : 000은 커팅을 하지않습니다[000~100]</param>
+        /// <param name="sensorType">라벨 센서 타입 선정[0:센서없음][1:반사][2:투과-일반라벨][3:투과-사전인쇄라벨][4:반사-수동임계값적용]</param>
+        /// <param name="printMode">프린터 모드 0:배치모드,1:스트립모드-백센서on,2:스트립모드-백센서off</param>
+        /// <param name="printSpeed">1단,2단,3단 [3ips,5ips,8ips] [1~3]</param>
+        /// <param name="withRibbonValue">리본 포함 여부 [0:리본 미포함, 1:리본 포함-절약모드, 2:리본 포함-절약off, 3:리본 포함-헤드업]</param>
+        /// <param name="tagRotation">0점 설정[0:좌상단, 1:우하단, 2:우상단, 3:좌하단</param>
+        /// <param name="statusResponse">상태 응답 [0:off,1:on]</param>
+        /// <returns></returns>
+        public string _SetStartPrinting(double printCount, double cutInterval, int sensorType, int printMode, int printSpeed, int withRibbonValue, int tagRotation, int statusResponse)
+        {
+            string printModestr = string.Empty;
+            switch (printMode)
+            {
+                case 0:
+                    printModestr = "C";
+                    break;
+                case 1:
+                    printModestr = "D";
+                    break;
+                case 2:
+                    printModestr = "E";
+                    break;
+            }
+
+            string printSpeedConvert = string.Empty;
+            switch (printSpeed)
+            {
+                case 1:
+                    printSpeedConvert = "3";
+                    break;
+                case 2:
+                    printSpeedConvert = "5";
+                    break;
+                case 3:
+                    printSpeedConvert = "8";
+                    break;
+            }
+
+            if (sensorType > 4)
+            {
+                sensorType = 0;
+            }
+
+            StringBuilder builder = new StringBuilder();
+            builder.Append(_StartCommand)
+                   .Append("XS")
+                   .Append(";")
+                   .Append("I")
+                   .Append(",")
+                   .Append(printCount.ToString("0000")) // aaaa
+                   .Append(",")
+                   .Append(cutInterval.ToString("000")) // bbb
+                   .Append(sensorType.ToString()) // c
+                   .Append(printModestr) // d
+                   .Append(printSpeedConvert) // e
+                   .Append(withRibbonValue.ToString()) // f
+                   .Append(tagRotation) // g
+                   .Append(statusResponse) // h
+                   .Append(_EndCommand); // end
 
             return builder.ToString();
         }
