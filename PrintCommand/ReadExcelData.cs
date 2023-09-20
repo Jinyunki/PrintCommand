@@ -20,7 +20,7 @@ namespace PrintCommand
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="sheetSelected"></param>
-        public void ReadExcelDataList(string filePath, int sheetSelected)
+        public List<string> ReadExcelDataList(string filePath, int sheetSelected)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -30,26 +30,20 @@ namespace PrintCommand
 
                 int colCount = worksheet.Dimension.Columns; // 가로줄의 개수
                 int rowCount = worksheet.Dimension.Rows; // 세로줄의 개수
-
-                Console.WriteLine(colCount + " <<<<< ColCount입니다.");
-                Console.WriteLine(rowCount + " <<<<< RowCount입니다.");
+                
+                List<string> columnData = new List<string>();
                 for (int col = 1; col <= colCount; col++)
                 {
                     string colName = worksheet.Cells[1, col].Text;
-                    
-                    List<string> columnData = new List<string>();
-
                     for (int row = 2; row <= rowCount; row++)
                     {
                         string cellValue = worksheet.Cells[row, col].Text;
                         Console.WriteLine(cellValue + "<<<<<<< cellValue 입니다");
                         
                         columnData.Add(cellValue);
-                        
                     }
-                        Console.WriteLine("columnData.Count :::::: " + columnData.Count);
                 }
-                
+                return columnData;
             }
         }
     }
