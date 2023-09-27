@@ -10,7 +10,33 @@ namespace PrintCommand
     /// </summary>
     public class TPCLCommand
     {
+        /// <summary>
+        /// 중간 사이즈 라벨 출력 메서드
+        /// </summary>
+        /// <param name="labelSizeX">라벨 사이즈 X축(넓이)</param>
+        /// <param name="labelSizeY">라벨 사이즈 Y축(높이)</param>
+        /// <param name="PrintSizeX">프린팅 영역 X축(넓이)</param>
+        /// <param name="PrintSizeY">프린팅 영역 Y축(높이)</param>
+        /// <param name="groundX">지역 데이터의 위치 X축(넓이)</param>
+        /// <param name="groundY">지역 데이터의 위치 Y축(높이)</param>
+        /// <param name="inputText">넣어줄 textInput</param>
+        /// <returns></returns>
+        public string _MiddleLabelCommand(double labelSizeX, double labelSizeY, double PrintSizeX, double PrintSizeY, double groundX, double groundY, string inputText)
+        {
+            StringBuilder builder = new StringBuilder();
+            //클리어
+            builder.Append(_SetClearImageBuffer());
+            //라벨 사이즈 지정
+            builder.Append(_SetLabelSize(labelSizeY,labelSizeX,PrintSizeY,PrintSizeX));
+            // 텍스트 위치 지정1
+            builder.Append(_SetTrueFont(01, groundX, groundY, 80, 80, "E", 90, "B"));
+            // 텍스트 인풋
+            builder.Append(_SetTrueValueInput(01, inputText));
+            // Event 진행
+            builder.Append(_SetStartPrinting(1,0,1,0,1,0,0,0));
 
+            return builder.ToString();
+        }
         #region Define Consts
         public const byte pointUP = 10;
         const char NUL = (char)0;
@@ -376,21 +402,82 @@ namespace PrintCommand
             StringBuilder builder = new StringBuilder();
             builder.Append(_StartCommand)
                    .Append("PV")
-                   .Append(textNumber.ToString("00"))
+                   .Append(textNumber.ToString("00")) // a
                    .Append(";")
-                   .Append(positionX.ToString("0000"))
+                   .Append(positionX.ToString("0000")) // b
                    .Append(",")
-                   .Append(positionY.ToString("0000"))
+                   .Append(positionY.ToString("0000")) // c
                    .Append(",")
-                   .Append(fontWidth.ToString())
+                   .Append(fontWidth.ToString("0000")) // d
                    .Append(",")
-                   .Append(fontHeight.ToString())
+                   .Append(fontHeight.ToString("0000")) //e
                    .Append(",")
-                   .Append(selectedFont)
+                   .Append(selectedFont) // f ( 여기에서 폰트 지정01~20 = 기본폰트, 21~25 추가폰트 ) + g 기능을 하나 추가해야함.(g 는 폰트가 지정된 경로)
                    .Append(",")
-                   .Append(rotateValue)
+                   .Append(rotateValue) // ii
                    .Append(",")
-                   .Append(textOption)
+                   .Append(textOption)  // j
+                   .Append(_EndCommand);
+
+            return builder.ToString();
+
+
+        }
+
+        //PV2
+        /// <summary>
+        /// font형식을 지정합니다
+        /// </summary>
+        /// <param name="textNumber">textGroupNumber (00~99) </param>
+        /// <param name="positionX">StartPoint X Value</param>
+        /// <param name="positionY">StartPoint Y Value</param>
+        /// <param name="fontWidth">폰트 넓이</param>
+        /// <param name="fontHeight">폰트 높이</param>
+        /// <param name="selectedFont">21~25</param>
+        /// <param name="rotate">font 회전 각도(0,90,180,270)</param>
+        /// <param name="fontPath">폰트 지정 경로 1= 1슬롯, 2 = 2슬롯</param>
+        /// <param name="textOption">문자 특성 "B" = 기본 Black Font</param>
+        /// <returns></returns>
+        public string _SetTrueFont(double textNumber, double positionX, double positionY, double fontWidth, double fontHeight, string selectedFont, int rotate, int fontPath,string textOption = "B")
+        {
+            string rotateValue = string.Empty;
+            switch (rotate)
+            {
+                case 0:
+                    rotateValue = "00";
+                    break;
+                case 90:
+                    rotateValue = "11";
+                    break;
+                case 180:
+                    rotateValue = "22";
+                    break;
+                case 270:
+                    rotateValue = "33";
+                    break;
+            }
+
+
+            StringBuilder builder = new StringBuilder();
+            builder.Append(_StartCommand)
+                   .Append("PV")
+                   .Append(textNumber.ToString("00")) // a
+                   .Append(";")
+                   .Append(positionX.ToString("0000")) // b
+                   .Append(",")
+                   .Append(positionY.ToString("0000")) // c
+                   .Append(",")
+                   .Append(fontWidth.ToString("0000")) // d
+                   .Append(",")
+                   .Append(fontHeight.ToString("0000")) //e
+                   .Append(",")
+                   .Append(selectedFont) // f ( 여기에서 폰트 지정01~20 = 기본폰트, 21~25 추가폰트 ) + g 기능을 하나 추가해야함.(g 는 폰트가 지정된 경로)
+                   .Append(",")
+                   .Append(fontPath.ToString()) // g 폰트지정 경로
+                   .Append(",")
+                   .Append(rotateValue) // ii
+                   .Append(",")
+                   .Append(textOption)  // j
                    .Append(_EndCommand);
 
             return builder.ToString();
