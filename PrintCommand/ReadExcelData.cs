@@ -88,12 +88,6 @@ namespace PrintCommand
 
             return FILEPATH;
         }
-
-        public ObservableCollection<string> ConvertObservableCollection(List<string> valueList)
-        {
-            ObservableCollection<string> observableCollection = new ObservableCollection<string>(valueList);
-
-            return observableCollection;
-        }
+        
     }
 }

@@ -526,16 +526,16 @@ namespace PrintCommand
             switch (rotate)
             {
                 case 0:
-                    rotateValue = "00";
+                    rotateValue = "0";
                     break;
                 case 90:
-                    rotateValue = "11";
+                    rotateValue = "1";
                     break;
                 case 180:
-                    rotateValue = "22";
+                    rotateValue = "2";
                     break;
                 case 270:
-                    rotateValue = "33";
+                    rotateValue = "3";
                     break;
             }
 
