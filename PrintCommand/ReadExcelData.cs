@@ -52,30 +52,6 @@ namespace PrintCommand
         }
 
         /// <summary>
-        /// 수정된 내역을 엑셀 시트에 적용시킵니다 (저장버튼)
-        /// </summary>
-        /// <param name="filePath">해당 파일 경로</param>
-        /// <param name="excelTotalData">저장 시킬 데이터</param>
-        public void SaveExcelData(string filePath, ObservableCollection<ObservableCollection<string>> excelTotalData)
-        {
-            using (var package = new ExcelPackage(new FileInfo(filePath)))
-            {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[0]; // 먼저 첫 번째 시트를 선택하거나 원하는 시트를 선택합니다.
-
-                for (int col = 1; col <= excelTotalData.Count; col++)
-                {
-                    for (int row = 1; row <= excelTotalData[col - 1].Count; row++) // 열 제목도 저장하기 위해 row를 1부터 시작하도록 수정
-                    {
-                        // TextBox에서 수정된 내용을 엑셀에 저장합니다.
-                        worksheet.Cells[row, col].Value = excelTotalData[col - 1][row - 1]; // 열 제목은 엑셀의 첫 번째 행에 저장됩니다.
-                    }
-                }
-                package.Save();
-            }
-        }
-
-
-        /// <summary>
         /// 엑셀 파일명을 입력하면 , 해당 데이터 경로에 원하는 엑셀을 불러옵니다.
         /// </summary>
         /// <param name="fileName">엑셀 파일명을 입력하세요 </param>

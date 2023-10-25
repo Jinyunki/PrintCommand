@@ -162,26 +162,20 @@ namespace PrintCommand
         /// density가 true면, Darker, false면 Light
         /// densityValue = 0~10 Lv, thermal가 true면 열전도, false면 직접 열전도를 시행합니다
         /// </summary>
-        /// <param name="density"></param>
         /// <param name="densityValue"></param>
         /// <param name="thermal"></param>
         /// <returns></returns>
-        public string _SetPrintDensity(bool density, double densityValue, bool thermal)
+        public string _SetPrintDensity(string densityValue, bool thermal)
         {
-            char densityChoice = density ? '+' : '-';
+            
             int thermalChoice = thermal ? 0 : 1;
-            if (densityValue > 10)
-            {
-                densityValue = 10;
-            }
 
             StringBuilder builder = new StringBuilder();
             builder.Append(_StartCommand)
                    .Append("AY;")
-                   .Append(densityChoice)
-                   .Append(densityValue.ToString("00"))
+                   .Append(densityValue)
                    .Append(",")
-                   .Append(thermalChoice.ToString("00"))
+                   .Append(thermalChoice.ToString())
                    .Append(_EndCommand);
 
             return builder.ToString();
@@ -349,6 +343,8 @@ namespace PrintCommand
                    .Append(textVerticalMargin.ToString())
                    .Append(",")
                    .Append(selectedFont)
+                   .Append(",")
+                   .Append("+00")
                    .Append(",")
                    .Append(rotateValue)
                    .Append(",")
@@ -660,7 +656,7 @@ namespace PrintCommand
                     printSpeedConvert = "3";
                     break;
                 case 2:
-                    printSpeedConvert = "5";
+                    printSpeedConvert = "4";
                     break;
                 case 3:
                     printSpeedConvert = "8";
